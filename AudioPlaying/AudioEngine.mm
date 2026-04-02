@@ -9,6 +9,7 @@
 #import <vector>
 #import <atomic>
 #import <cmath>
+#import <Accelerate/Accelerate.h>
 
 // --- Helper Functions ---
 
@@ -176,34 +177,43 @@ static OSStatus ioproc(AudioObjectID inDevice,
     
     AudioEngine* engine = (__bridge AudioEngine*)inClientData;
     
-    // インスタンス変数へのダイレクトアクセス（高速化のため。ヘッダーで公開していない内部変数）
-    // Objective-C++なので、構造体のようにアクセス可能
     float currentHz = engine->_hz.load();
-    double sampleRate = engine->_sampleRate;
-    double phase = engine->_currentPhase;
+    float sampleRate = (float)engine->_sampleRate;
+    float phaseStep = (float)(2.0 * M_PI * currentHz / sampleRate);
+    float amplitude = 0.4f; // 0.5だと少し大きい場合があるので安全策で0.4
     
+    float startPhase = (float)engine->_currentPhase;
+    UInt32 totalFrames = 0;
+
     for (UInt32 i = 0; i < outOutputData->mNumberBuffers; ++i) {
         AudioBuffer& buffer = outOutputData->mBuffers[i];
-        Float32* data = (Float32*)buffer.mData;
-        UInt32 numFrames = buffer.mDataByteSize / (buffer.mNumberChannels * sizeof(Float32));
-        
-        for (UInt32 frame = 0; frame < numFrames; ++frame) {
-            float sample = sin(phase);
+        float* data = (float*)buffer.mData;
+        // そのバッファに含まれる「1チャンネルあたりの」フレーム数
+        UInt32 numFrames = buffer.mDataByteSize / (buffer.mNumberChannels * sizeof(float));
+        totalFrames = numFrames; // 後の位相更新用
+
+        for (UInt32 ch = 0; ch < buffer.mNumberChannels; ++ch) {
+            // 各チャンネルの書き出し開始位置（インターリーブ対応）
+            float* channelData = data + ch;
+            float chStartPhase = startPhase;
             
-            // 全チャンネルに同じ値を書き込む（インターリーブ/非インターリーブ両対応）
-            for (UInt32 channel = 0; channel < buffer.mNumberChannels; ++channel) {
-                data[frame * buffer.mNumberChannels + channel] = sample * 0.5f; // 音量0.5
+            // vDSP_vramp の第4引数（ストライド）にチャンネル数を指定
+            // これにより L,R,L,R の L だけ、あるいは R だけを埋められる
+            vDSP_vramp(&chStartPhase, &phaseStep, channelData, buffer.mNumberChannels, numFrames);
+            
+            // サイン波変換と音量調整もストライドを考慮して行う
+            int n = (int)numFrames;
+            // vvsinf はストライド指定が難しいため、もしインターリーブなら
+            // 一旦別バッファで作るのが安全ですが、まずは簡易的に以下で試してください
+            for (UInt32 f = 0; f < numFrames; ++f) {
+                float* samplePtr = channelData + (f * buffer.mNumberChannels);
+                *samplePtr = sinf(*samplePtr) * amplitude;
             }
-            
-            // 位相の更新
-            phase += 2.0 * M_PI * currentHz / sampleRate;
-            if (phase >= 2.0 * M_PI) phase -= 2.0 * M_PI;
         }
     }
     
-    // 次回の呼び出しのために位相を保存
-    engine->_currentPhase = phase;
+    // 精度維持のため、ここでの fmodf が生命線です！
+    engine->_currentPhase = fmodf(startPhase + (phaseStep * totalFrames), (float)(2.0 * M_PI));
     
     return kAudioHardwareNoError;
 }
-

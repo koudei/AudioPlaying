@@ -84,7 +84,8 @@ class Model: ObservableObject {
     // 周波数（スライダー等と連動）
     var hz: Float32 = 440.0 {
         didSet {
-            changeFrequency(next_hz: hz)
+            // エンジンへの反映は即座に行う（音の遅延を防ぐ）
+            engine.hz = hz
         }
     }
     
@@ -100,6 +101,11 @@ class Model: ObservableObject {
                 stopEngine()
             }
         }
+    }
+    init() {
+        self.devicelist = loadAudioDevices()
+        self.hz = 440.0
+        self.engine = AudioEngine()
     }
 
     /// デバイスを変更する

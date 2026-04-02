@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ContentView: View {
     @State private var model = Model()
+    @State private var sliderValue: Float = 440.0
     
     var body: some View {
         VStack(spacing: 24) {
@@ -59,7 +60,7 @@ struct ContentView: View {
                     Label("Frequency", systemImage: "tuningfork")
                         .font(.subheadline).bold()
                     Spacer()
-                    Text("\(Int(model.hz)) Hz")
+                    Text("\(Int(sliderValue)) Hz")
                         .font(.system(.body, design: .monospaced))
                         .bold()
                         .foregroundStyle(.blue)
@@ -71,6 +72,8 @@ struct ContentView: View {
                     Text("20Hz")
                 } maximumValueLabel: {
                     Text("2kHz")
+                }.onChange(of: sliderValue) { oldValue, newValue in
+                    model.hz = Float32(newValue) // エンジンへの反映はこれだけでOK（描画は伴わない）
                 }
                 
                 // プリセットボタン

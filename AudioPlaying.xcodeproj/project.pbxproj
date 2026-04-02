@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		99A693432F7E7072008FCA43 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 99A693422F7E7072008FCA43 /* Accelerate.framework */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		99A692FC2F7E58E0008FCA43 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -27,11 +31,25 @@
 		99A692EE2F7E58DF008FCA43 /* AudioPlaying.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AudioPlaying.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		99A692FB2F7E58E0008FCA43 /* AudioPlayingTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AudioPlayingTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		99A693052F7E58E0008FCA43 /* AudioPlayingUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AudioPlayingUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		99A693422F7E7072008FCA43 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		99A693402F7E6B71008FCA43 /* Exceptions for "AudioPlaying" folder in "AudioPlaying" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 99A692ED2F7E58DF008FCA43 /* AudioPlaying */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		99A692F02F7E58DF008FCA43 /* AudioPlaying */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				99A693402F7E6B71008FCA43 /* Exceptions for "AudioPlaying" folder in "AudioPlaying" target */,
+			);
 			path = AudioPlaying;
 			sourceTree = "<group>";
 		};
@@ -52,6 +70,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				99A693432F7E7072008FCA43 /* Accelerate.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,6 +97,7 @@
 				99A692F02F7E58DF008FCA43 /* AudioPlaying */,
 				99A692FE2F7E58E0008FCA43 /* AudioPlayingTests */,
 				99A693082F7E58E0008FCA43 /* AudioPlayingUITests */,
+				99A693412F7E7072008FCA43 /* Frameworks */,
 				99A692EF2F7E58DF008FCA43 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -90,6 +110,14 @@
 				99A693052F7E58E0008FCA43 /* AudioPlayingUITests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		99A693412F7E7072008FCA43 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				99A693422F7E7072008FCA43 /* Accelerate.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -407,7 +435,9 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_RESOURCE_ACCESS_PHOTO_LIBRARY = NO;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = AudioPlaying/Info.plist;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "$(PRODUCT_BUNDLE_PACKAGE_TYPE)";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -450,7 +480,9 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_RESOURCE_ACCESS_PHOTO_LIBRARY = NO;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = AudioPlaying/Info.plist;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "$(PRODUCT_BUNDLE_PACKAGE_TYPE)";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
